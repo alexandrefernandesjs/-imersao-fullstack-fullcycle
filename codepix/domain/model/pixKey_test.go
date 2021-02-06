@@ -1,12 +1,10 @@
 package model_test
 
 import (
-	"testing"
-
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/domain/model"
 	uuid "github.com/satori/go.uuid"
-
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/domain/model"
 	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func TestModel_NewPixKey(t *testing.T) {
@@ -15,21 +13,21 @@ func TestModel_NewPixKey(t *testing.T) {
 	bank, err := model.NewBank(code, name)
 
 	accountNumber := "abcnumber"
-	ownerName := "Wesley"
+	ownerName := "Lucas Mateus"
 	account, err := model.NewAccount(bank, accountNumber, ownerName)
 
 	kind := "email"
-	key := "j@j.com"
-	pixKey, err := model.NewPixKey(account, kind, key)
+	key := "dummyemail@gmail.com"
+	pixKey, err := model.NewPixKey(kind, account, key)
 
 	require.NotEmpty(t, uuid.FromStringOrNil(pixKey.ID))
 	require.Equal(t, pixKey.Kind, kind)
 	require.Equal(t, pixKey.Status, "active")
 
 	kind = "cpf"
-	_, err = model.NewPixKey(account, kind, key)
+	_, err = model.NewPixKey(kind, account, key)
 	require.Nil(t, err)
 
-	_, err = model.NewPixKey(account, "nome", key)
+	_, err = model.NewPixKey("nome", account, key)
 	require.NotNil(t, err)
 }

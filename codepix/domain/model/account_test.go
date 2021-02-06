@@ -1,21 +1,20 @@
 package model_test
 
 import (
-	"testing"
-
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/domain/model"
 	uuid "github.com/satori/go.uuid"
-
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/domain/model"
 	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func TestModel_NewAccount(t *testing.T) {
 	code := "001"
 	name := "Banco do Brasil"
+
 	bank, err := model.NewBank(code, name)
 
 	accountNumber := "abcnumber"
-	ownerName := "Wesley"
+	ownerName := "Lucas Mateus"
 	account, err := model.NewAccount(bank, accountNumber, ownerName)
 
 	require.Nil(t, err)

@@ -1,16 +1,47 @@
-package kafka
+package main
 
 import (
 	"fmt"
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/joho/godotenv"
+	"log"
 	"os"
+	"path/filepath"
+	"runtime"
 )
+
+func main() {
+	producer := NewKafkaProducer()
+
+	topic := os.Getenv("kafkaTopicDesafio")
+	msg := "Higurashi no Naku Koro ni é uma excelente Visual Novel e você deveria lê-la."
+	deliveryChan := make(chan ckafka.Event)
+
+	err := Publish(msg, topic, producer, deliveryChan)
+	if err != nil{
+		panic(err)
+	}
+
+	DeliveryReport(deliveryChan)
+}
+
+func init() {
+	_, b, _, _ := runtime.Caller(0)
+	basepath := filepath.Dir(b)
+
+	err := godotenv.Load(basepath + "/../.env")
+	if err != nil {
+		log.Fatalf("Error loading .env files")
+	}
+}
 
 func NewKafkaProducer() *ckafka.Producer {
 	configMap := &ckafka.ConfigMap{
 		"bootstrap.servers": os.Getenv("kafkaBootstrapServers"),
 	}
+
 	p, err := ckafka.NewProducer(configMap)
+
 	if err != nil {
 		panic(err)
 	}

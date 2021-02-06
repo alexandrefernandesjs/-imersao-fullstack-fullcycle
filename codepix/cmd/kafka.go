@@ -16,12 +16,11 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/application/kafka"
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/infrastructure/db"
+	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"os"
 
-	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/application/kafka"
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/infrastructure/db"
 	"github.com/spf13/cobra"
 )
 
@@ -29,19 +28,16 @@ import (
 var kafkaCmd = &cobra.Command{
 	Use:   "kafka",
 	Short: "Start consuming transactions using Apache Kafka",
-
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Produzindo mensagem")
-		database := db.ConnectDB(os.Getenv("env"))
-
 		deliveryChan := make(chan ckafka.Event)
+		database := db.ConnectDB(os.Getenv("env"))
 		producer := kafka.NewKafkaProducer()
 
-		//kafka.Publish("Olá kafka", "test", producer, deliveryChan)
+		// kafka.Publish("Olá Consumer", "teste", producer, deliveryChan)
 		go kafka.DeliveryReport(deliveryChan)
 
-		KafkaProcessor := kafka.NewKafkaProcessor(database, producer, deliveryChan)
-		KafkaProcessor.Consume()
+		kafkaProcessor := kafka.NewKafkaProcessor(database, producer, deliveryChan)
+		kafkaProcessor.Consume()
 	},
 }
 

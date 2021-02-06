@@ -2,9 +2,8 @@ package repository
 
 import (
 	"fmt"
-
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/domain/model"
 	"github.com/jinzhu/gorm"
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/domain/model"
 )
 
 type PixKeyRepositoryDb struct {
@@ -35,38 +34,32 @@ func (r PixKeyRepositoryDb) RegisterKey(pixKey *model.PixKey) (*model.PixKey, er
 	return pixKey, nil
 }
 
-func (r PixKeyRepositoryDb) FindKeyByKind(key, kind string) (*model.PixKey, error) {
+func (r PixKeyRepositoryDb) FindKeyByKind(key string, kind string) (*model.PixKey, error) {
 	var pixKey model.PixKey
-
 	r.Db.Preload("Account.Bank").First(&pixKey, "kind = ? and key = ?", kind, key)
 
 	if pixKey.ID == "" {
-		return nil, fmt.Errorf("no key as found")
+		return nil, fmt.Errorf("no key was found")
 	}
-
 	return &pixKey, nil
 }
 
 func (r PixKeyRepositoryDb) FindAccount(id string) (*model.Account, error) {
 	var account model.Account
-
 	r.Db.Preload("Bank").First(&account, "id = ?", id)
 
 	if account.ID == "" {
-		return nil, fmt.Errorf("no account as found")
+		return nil, fmt.Errorf("no account found")
 	}
-
 	return &account, nil
 }
 
 func (r PixKeyRepositoryDb) FindBank(id string) (*model.Bank, error) {
 	var bank model.Bank
-
 	r.Db.First(&bank, "id = ?", id)
 
 	if bank.ID == "" {
-		return nil, fmt.Errorf("no bank as found")
+		return nil, fmt.Errorf("no bank found")
 	}
-
 	return &bank, nil
 }

@@ -2,9 +2,8 @@ package usecase
 
 import (
 	"errors"
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/domain/model"
 	"log"
-
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/domain/model"
 )
 
 type TransactionUseCase struct {
@@ -30,7 +29,7 @@ func (t *TransactionUseCase) Register(accountId string, amount float64, pixKeyto
 	}
 
 	t.TransactionRepository.Save(transaction)
-	if transaction.ID != "" {
+	if transaction.Base.ID != "" {
 		return transaction, nil
 	}
 

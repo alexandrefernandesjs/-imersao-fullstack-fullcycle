@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/cmd"
+import "github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/cmd"
 
 func main() {
 	cmd.Execute()

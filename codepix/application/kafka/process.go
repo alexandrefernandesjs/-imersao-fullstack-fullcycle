@@ -2,27 +2,26 @@ package kafka
 
 import (
 	"fmt"
-	"os"
-
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/application/factory"
+	appmodel "github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/application/model"
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/application/usecase"
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/domain/model"
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/jinzhu/gorm"
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/application/factory"
-	appmodel "github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/application/model"
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/application/usecase"
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/domain/model"
+	"os"
 )
 
 type KafkaProcessor struct {
-	Database     *gorm.DB
-	Producer     *ckafka.Producer
+	Database *gorm.DB
+	Producer *ckafka.Producer
 	DeliveryChan chan ckafka.Event
 }
 
 func NewKafkaProcessor(database *gorm.DB, producer *ckafka.Producer, deliveryChan chan ckafka.Event) *KafkaProcessor {
 	return &KafkaProcessor{
-		Database:     database,
-		Producer:     producer,
-		DeliveryChan: deliveryChan,
+		Database: database,
+		Producer: producer,
+		DeliveryChan:  deliveryChan,
 	}
 }
 
@@ -40,19 +39,18 @@ func (k *KafkaProcessor) Consume() {
 
 	topics := []string{os.Getenv("kafkaTransactionTopic"), os.Getenv("kafkaTransactionConfirmationTopic")}
 	c.SubscribeTopics(topics, nil)
-
+	
 	fmt.Println("kafka consumer has been started")
 	for {
 		msg, err := c.ReadMessage(-1)
 		if err == nil {
-			fmt.Println(string(msg.Value))
 			k.processMessage(msg)
 		}
 	}
 }
 
 func (k *KafkaProcessor) processMessage(msg *ckafka.Message) {
-	transactionsTopic := "transactions"
+	transactionsTopic            := "transactions"
 	transactionConfirmationTopic := "transaction_confirmation"
 
 	switch topic := *msg.TopicPartition.Topic; topic {
@@ -82,12 +80,13 @@ func (k *KafkaProcessor) processTransaction(msg *ckafka.Message) error {
 		transaction.Description,
 		transaction.ID,
 	)
+
 	if err != nil {
 		fmt.Println("error registering transaction", err)
 		return err
 	}
 
-	topic := "bank" + createdTransaction.PixKeyTo.Account.Bank.Code
+	topic := "bank"+createdTransaction.PixKeyTo.Account.Bank.Code
 	transaction.ID = createdTransaction.ID
 	transaction.Status = model.TransactionPending
 	transactionJson, err := transaction.ToJson()
@@ -97,8 +96,11 @@ func (k *KafkaProcessor) processTransaction(msg *ckafka.Message) error {
 	}
 
 	err = Publish(string(transactionJson), topic, k.Producer, k.DeliveryChan)
+	if err != nil {
+		return err
+	}
 
-	return err
+	return nil
 }
 
 func (k *KafkaProcessor) processTransactionConfirmation(msg *ckafka.Message) error {

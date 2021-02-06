@@ -2,9 +2,8 @@ package grpc
 
 import (
 	"context"
-
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/application/grpc/pb"
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/application/usecase"
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/application/grpc/pb"
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/application/usecase"
 )
 
 type PixGrpcService struct {
@@ -16,13 +15,13 @@ func (p *PixGrpcService) RegisterPixKey(ctx context.Context, in *pb.PixKeyRegist
 	key, err := p.PixUseCase.RegisterKey(in.Key, in.Kind, in.AccountId)
 	if err != nil {
 		return &pb.PixKeyCreatedResult{
-			Status: "no created",
-			Error:  err.Error(),
+			Status: "not created",
+			Error: err.Error(),
 		}, err
 	}
 
 	return &pb.PixKeyCreatedResult{
-		Id:     key.ID,
+		Id: key.ID,
 		Status: "created",
 	}, nil
 }
@@ -34,10 +33,10 @@ func (p *PixGrpcService) Find(ctx context.Context, in *pb.PixKey) (*pb.PixKeyInf
 	}
 
 	return &pb.PixKeyInfo{
-		Id:   pixKey.ID,
-		Kind: pixKey.Kind,
-		Key:  pixKey.Key,
-		Account: &pb.Account{
+		Id:        pixKey.ID,
+		Kind:      pixKey.Kind,
+		Key:       pixKey.Key,
+		Account:   &pb.Account{
 			AccountId:     pixKey.AccountID,
 			AccountNumber: pixKey.Account.Number,
 			BankId:        pixKey.Account.BankID,

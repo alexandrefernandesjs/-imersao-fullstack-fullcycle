@@ -16,24 +16,23 @@ limitations under the License.
 package cmd
 
 import (
-	"os"
-
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/application/grpc"
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/application/kafka"
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/infrastructure/db"
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/application/grpc"
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/application/kafka"
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/infrastructure/db"
 	"github.com/spf13/cobra"
+	"os"
 )
 
 var (
 	gRPCPortNumber int
 )
 
+
 // allCmd represents the all command
 var allCmd = &cobra.Command{
 	Use:   "all",
 	Short: "Run gRPC and a Kafka Consumer",
-
 	Run: func(cmd *cobra.Command, args []string) {
 		database := db.ConnectDB(os.Getenv("env"))
 		go grpc.StartGrpcServer(database, portNumber)

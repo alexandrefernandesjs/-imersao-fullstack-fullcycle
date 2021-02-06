@@ -1,18 +1,15 @@
 package model
 
 import (
-	"errors"
-	"strings"
-	"time"
-
 	"github.com/asaskevich/govalidator"
 	uuid "github.com/satori/go.uuid"
+	"time"
 )
 
 type User struct {
 	Base  `valid:"required"`
-	Name  string `json:"name" gorm:"type:varchar(120)" valid:"notnull"`
-	Email string `json:"email" gorm:"type:varchar(150)" valid:"notnull"`
+	Name  string `json:"name" valid:"notnull"`
+	Email string `json:"email" valid:"notnull"`
 }
 
 func (user *User) isValid() error {
@@ -20,24 +17,14 @@ func (user *User) isValid() error {
 	if err != nil {
 		return err
 	}
-
-	if user.Email == "" || !strings.ContainsAny(user.Email, "@.") {
-		return errors.New("email not informed or invalid")
-	}
-
-	if user.Name == "" || len(strings.Split(user.Name, " ")) <= 1 {
-		return errors.New("name is not informed or not completed")
-	}
-
 	return nil
 }
 
-func NewUser(email, name string) (*User, error) {
+func NewUser(name string, email string) (*User, error) {
 	user := User{
-		Name:  name,
+		Name: name,
 		Email: email,
 	}
-
 	user.ID = uuid.NewV4().String()
 	user.CreatedAt = time.Now()
 

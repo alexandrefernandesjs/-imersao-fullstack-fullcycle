@@ -16,23 +16,19 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/application/grpc"
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/infrastructure/db"
 	"os"
 
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/application/grpc"
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/infrastructure/db"
 	"github.com/spf13/cobra"
 )
 
 var portNumber int
-
 // grpcCmd represents the grpc command
 var grpcCmd = &cobra.Command{
 	Use:   "grpc",
-	Short: "Start gRPC Server",
-
+	Short: "Start gRPC server",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("grpc called")
 		database := db.ConnectDB(os.Getenv("env"))
 		grpc.StartGrpcServer(database, portNumber)
 	},
@@ -40,8 +36,7 @@ var grpcCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(grpcCmd)
-
-	grpcCmd.Flags().IntVarP(&portNumber, "port", "p", 50051, "gRPC Server Port")
+	grpcCmd.Flags().IntVarP(&portNumber, "port", "p", 50051, "gRPC Server port")
 
 	// Here you will define your flags and configuration settings.
 

@@ -1,12 +1,10 @@
 package model_test
 
 import (
-	"testing"
-
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/domain/model"
 	uuid "github.com/satori/go.uuid"
-
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/domain/model"
 	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func TestNewTransaction(t *testing.T) {
@@ -15,23 +13,23 @@ func TestNewTransaction(t *testing.T) {
 	bank, _ := model.NewBank(code, name)
 
 	accountNumber := "abcnumber"
-	ownerName := "Wesley"
+	ownerName := "Lucas Mateus"
 	account, _ := model.NewAccount(bank, accountNumber, ownerName)
 
 	accountNumberDestination := "abcdestination"
-	ownerName = "Mariana"
+	ownerName = "Ganyu"
 	accountDestination, _ := model.NewAccount(bank, accountNumberDestination, ownerName)
 
 	kind := "email"
-	key := "j@j.com"
-	pixKey, _ := model.NewPixKey(accountDestination, kind, key)
+	key := "dummyemail@gmail.com"
+	pixKey, _ := model.NewPixKey(kind, accountDestination, key)
 
 	require.NotEqual(t, account.ID, accountDestination.ID)
 
 	amount := 3.10
 	statusTransaction := "pending"
-	transaction, err := model.NewTransaction(account, amount, pixKey, "My description")
-	//
+	transaction, err := model.NewTransaction(account, amount, pixKey, "My description", "")
+
 	require.Nil(t, err)
 	require.NotNil(t, uuid.FromStringOrNil(transaction.ID))
 	require.Equal(t, transaction.Amount, amount)
@@ -39,12 +37,12 @@ func TestNewTransaction(t *testing.T) {
 	require.Equal(t, transaction.Description, "My description")
 	require.Empty(t, transaction.CancelDescription)
 
-	pixKeySameAccount, err := model.NewPixKey(account, kind, key)
+	pixKeySameAccount, err := model.NewPixKey(kind, account, key)
 
-	_, err = model.NewTransaction(account, amount, pixKeySameAccount, "My description")
+	_, err = model.NewTransaction(account, amount, pixKeySameAccount, "My description", "")
 	require.NotNil(t, err)
 
-	_, err = model.NewTransaction(account, 0, pixKey, "My description")
+	_, err = model.NewTransaction(account, 0, pixKey, "My description", "")
 	require.NotNil(t, err)
 
 }
@@ -55,19 +53,19 @@ func TestModel_ChangeStatusOfATransaction(t *testing.T) {
 	bank, _ := model.NewBank(code, name)
 
 	accountNumber := "abcnumber"
-	ownerName := "Wesley"
+	ownerName := "Lucas Mateus"
 	account, _ := model.NewAccount(bank, accountNumber, ownerName)
 
 	accountNumberDestination := "abcdestination"
-	ownerName = "Mariana"
+	ownerName = "Ganyu"
 	accountDestination, _ := model.NewAccount(bank, accountNumberDestination, ownerName)
 
 	kind := "email"
-	key := "j@j.com"
-	pixKey, _ := model.NewPixKey(accountDestination, kind, key)
+	key := "dummyemail@gmail.com"
+	pixKey, _ := model.NewPixKey(kind, accountDestination, key)
 
 	amount := 3.10
-	transaction, _ := model.NewTransaction(account, amount, pixKey, "My description")
+	transaction, _ := model.NewTransaction(account, amount, pixKey, "My description", "")
 
 	transaction.Complete()
 	require.Equal(t, transaction.Status, model.TransactionCompleted)
@@ -75,5 +73,6 @@ func TestModel_ChangeStatusOfATransaction(t *testing.T) {
 	transaction.Cancel("Error")
 	require.Equal(t, transaction.Status, model.TransactionError)
 	require.Equal(t, transaction.CancelDescription, "Error")
+
 
 }

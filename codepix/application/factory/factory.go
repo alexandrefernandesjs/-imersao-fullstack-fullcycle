@@ -1,18 +1,19 @@
 package factory
 
 import (
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/application/usecase"
+	"github.com/LucasMMF/imersao-fullstack-fullcycle/codepix/infrastructure/repository"
 	"github.com/jinzhu/gorm"
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/application/usecase"
-	"github.com/sSchmidtT/imersao-fullstack-fullcycle/codepix/infrastructure/repository"
 )
 
 func TransactionUseCaseFactory(database *gorm.DB) usecase.TransactionUseCase {
 	pixRepository := repository.PixKeyRepositoryDb{Db: database}
-	transactionUseCaseFactory := repository.TransactionRepositoryDb{Db: database}
+	transactionRepository := repository.TransactionRepositoryDb{Db: database}
 
 	transactionUseCase := usecase.TransactionUseCase{
-		TransactionRepository: &transactionUseCaseFactory,
+		TransactionRepository: &transactionRepository,
 		PixRepository:         pixRepository,
 	}
+
 	return transactionUseCase
 }

@@ -17,9 +17,8 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/spf13/cobra"
+	"os"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
@@ -30,8 +29,7 @@ var cfgFile string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "codepix",
-	Short: "Use codepix software to intermediate bank transaction witch apache kafka and gRPC",
-
+	Short: "Use codepix software to intermediate bank transactions with apache kafka and grpc",
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	//	Run: func(cmd *cobra.Command, args []string) { },
